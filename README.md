@@ -20,6 +20,8 @@ Telegram bot that watches messages for X/Twitter status links and posts preview-
 
 ## Docker Run Deployment
 
+Use a local build:
+
 ```bash
 docker build -t tg-x-link-transformer .
 docker run -d \
@@ -28,6 +30,17 @@ docker run -d \
   -e TELEGRAM_BOT_TOKEN="123456789:replace-with-your-bot-token" \
   -e LINK_ACTION="reply" \
   tg-x-link-transformer
+```
+
+Or use the image published by GitHub Packages:
+
+```bash
+docker run -d \
+  --name tg-x-link-transformer \
+  --restart unless-stopped \
+  -e TELEGRAM_BOT_TOKEN="123456789:replace-with-your-bot-token" \
+  -e LINK_ACTION="reply" \
+  ghcr.io/<owner>/<repo>:latest
 ```
 
 Check logs:
