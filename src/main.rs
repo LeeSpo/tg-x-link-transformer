@@ -54,6 +54,11 @@ async fn handle_message(bot: Bot, message: Message, config: Arc<Config>) -> Resu
             reply_with_links(&bot, &message, response).await?;
         }
         LinkAction::DeleteResend => {
+            let response = format_delete_resend_response(
+                &response,
+                message.from().and_then(|user| user.username.as_deref()),
+            );
+
             if let Err(error) = bot.delete_message(message.chat.id, message.id).await {
                 tracing::warn!(
                     "failed to delete original message {}; falling back to reply: {error}",
@@ -69,9 +74,34 @@ async fn handle_message(bot: Bot, message: Message, config: Arc<Config>) -> Resu
     Ok(())
 }
 
+fn format_delete_resend_response(links: &str, sender_username: Option<&str>) -> String {
+    match sender_username {
+        Some(username) => format!("{links}\n@{username}"),
+        None => links.to_string(),
+    }
+}
+
 async fn reply_with_links(bot: &Bot, message: &Message, text: String) -> Result<()> {
     bot.send_message(message.chat.id, text)
         .reply_to_message_id(MessageId(message.id.0))
         .await?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn delete_resend_response_appends_sender_username() {
+        let response = format_delete_resend_response(
+            "https://fixupx.com/GzDTeee/status/2050185474439049466",
+            Some("xxx"),
+        );
+
+        assert_eq!(
+            response,
+            "https://fixupx.com/GzDTeee/status/2050185474439049466\n@xxx"
+        );
+    }
 }
