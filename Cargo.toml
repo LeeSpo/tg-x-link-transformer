@@ -1,0 +1,16 @@
+[package]
+name = "tg-x-link-transformer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0"
+pretty_env_logger = "0.5"
+regex = "1.10"
+teloxide = { version = "0.12", features = ["macros"] }
+tokio = { version = "1.37", features = ["macros", "rt-multi-thread"] }
+tracing = "0.1"
+url = "2.5"
+
+[dev-dependencies]
+pretty_assertions = "1.4"

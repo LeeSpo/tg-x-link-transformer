@@ -1,0 +1,7 @@
+services:
+  tg-x-link-transformer:
+    build: .
+    container_name: tg-x-link-transformer
+    restart: unless-stopped
+    env_file:
+      - .env
