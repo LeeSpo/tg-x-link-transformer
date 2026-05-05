@@ -20,7 +20,7 @@ Telegram bot that watches messages for X/Twitter status links and posts preview-
 
 ## Docker Run Deployment
 
-Use a local build:
+Use a local Alpine/musl build:
 
 ```bash
 docker build -t tg-x-link-transformer .
