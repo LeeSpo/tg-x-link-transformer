@@ -1,4 +1,4 @@
-FROM --platform=$TARGETPLATFORM rust:1-bookworm AS builder
+FROM rust:1-bookworm AS builder
 
 ARG TARGETARCH
 
