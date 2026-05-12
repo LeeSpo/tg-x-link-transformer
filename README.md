@@ -11,6 +11,7 @@ Telegram bot that watches messages for X/Twitter status links and posts preview-
 - Ignores non-status links and already converted `fixupx.com` / `fxtwitter.com` links.
 - Replies with converted links by default.
 - Each chat can enable delete/resend mode with `/LINK_DELETE TRUE` and disable it with `/LINK_DELETE FALSE`.
+- Registers `/link_delete` with Telegram at startup so it appears in bot command suggestions.
 
 ## Telegram Setup
 
@@ -18,7 +19,7 @@ Telegram bot that watches messages for X/Twitter status links and posts preview-
 2. Run `/newbot`, then copy the bot token.
 3. If the bot needs to read all group messages, use BotFather `/setprivacy` and disable privacy mode for this bot.
 4. Add the bot to your group.
-5. In each group, send `/LINK_DELETE TRUE` if you want the bot to delete the original message and resend converted links.
+5. In each group, send `/link_delete true` if you want the bot to delete the original message and resend converted links.
 6. For groups with link delete enabled, promote the bot to group admin and grant delete-message permission. If deletion fails, the bot falls back to replying.
 
 ## Docker Run Deployment

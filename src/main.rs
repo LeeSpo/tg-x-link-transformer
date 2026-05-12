@@ -3,7 +3,7 @@ use std::sync::Arc;
 use anyhow::Result;
 use teloxide::{prelude::*, types::MessageId};
 use tg_x_link_transformer::{
-    command::{parse_link_delete_command, LinkDeleteCommand},
+    command::{bot_commands, parse_link_delete_command, LinkDeleteCommand},
     config::Config,
     link_transform::transform_links,
     settings::LinkSettingsStore,
@@ -16,6 +16,8 @@ async fn main() -> Result<()> {
     let config = Config::from_env()?;
     let bot = Bot::new(config.bot_token.clone());
     let settings = Arc::new(LinkSettingsStore::load(&config.link_settings_path)?);
+
+    bot.set_my_commands(bot_commands()).await?;
 
     tracing::info!(
         "starting long polling bot with LINK_SETTINGS_PATH={}",

@@ -1,7 +1,16 @@
+use teloxide::types::BotCommand;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum LinkDeleteCommand {
     Set(bool),
     Invalid,
+}
+
+pub fn bot_commands() -> Vec<BotCommand> {
+    vec![BotCommand::new(
+        "link_delete",
+        "Set link delete mode for this chat",
+    )]
 }
 
 pub fn parse_link_delete_command(text: &str) -> Option<LinkDeleteCommand> {
@@ -79,5 +88,17 @@ mod tests {
     fn ignores_unrelated_messages() {
         assert_eq!(parse_link_delete_command("hello /LINK_DELETE TRUE"), None);
         assert_eq!(parse_link_delete_command("/start"), None);
+    }
+
+    #[test]
+    fn bot_commands_registers_link_delete_completion() {
+        let commands = bot_commands();
+
+        assert_eq!(commands.len(), 1);
+        assert_eq!(commands[0].command, "link_delete");
+        assert_eq!(
+            commands[0].description,
+            "Set link delete mode for this chat"
+        );
     }
 }
