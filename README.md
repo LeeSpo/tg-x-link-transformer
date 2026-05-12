@@ -9,6 +9,8 @@ Telegram bot that watches messages for X/Twitter status links and posts preview-
 - Keeps query strings and fragments, such as `?s=20`.
 - Converts all matching links in one message.
 - Ignores non-status links and already converted `fixupx.com` / `fxtwitter.com` links.
+- Replies with converted links by default.
+- Each chat can enable delete/resend mode with `/LINK_DELETE TRUE` and disable it with `/LINK_DELETE FALSE`.
 
 ## Telegram Setup
 
@@ -16,7 +18,8 @@ Telegram bot that watches messages for X/Twitter status links and posts preview-
 2. Run `/newbot`, then copy the bot token.
 3. If the bot needs to read all group messages, use BotFather `/setprivacy` and disable privacy mode for this bot.
 4. Add the bot to your group.
-5. For `LINK_ACTION=delete_resend`, promote the bot to group admin and grant delete-message permission.
+5. In each group, send `/LINK_DELETE TRUE` if you want the bot to delete the original message and resend converted links.
+6. For groups with link delete enabled, promote the bot to group admin and grant delete-message permission. If deletion fails, the bot falls back to replying.
 
 ## Docker Run Deployment
 
@@ -28,7 +31,8 @@ docker run -d \
   --name tg-x-link-transformer \
   --restart unless-stopped \
   -e TELEGRAM_BOT_TOKEN="123456789:replace-with-your-bot-token" \
-  -e LINK_ACTION="reply" \
+  -e LINK_SETTINGS_PATH="/data/link-settings.json" \
+  -v tg-x-link-transformer-data:/data \
   tg-x-link-transformer
 ```
 
@@ -39,7 +43,8 @@ docker run -d \
   --name tg-x-link-transformer \
   --restart unless-stopped \
   -e TELEGRAM_BOT_TOKEN="123456789:replace-with-your-bot-token" \
-  -e LINK_ACTION="reply" \
+  -e LINK_SETTINGS_PATH="/data/link-settings.json" \
+  -v tg-x-link-transformer-data:/data \
   ghcr.io/<owner>/<repo>:latest
 ```
 
@@ -49,10 +54,12 @@ Check logs:
 docker logs -f tg-x-link-transformer
 ```
 
-`LINK_ACTION` values:
+Runtime settings:
 
-- `reply`: reply to the original message with converted links.
-- `delete_resend`: try to delete the original message, then send converted links. If deletion fails, the bot falls back to `reply`.
+- `LINK_SETTINGS_PATH` defaults to `link-settings.json`.
+- The settings file stores each chat's `/LINK_DELETE TRUE/FALSE` value.
+- Mount a persistent volume and point `LINK_SETTINGS_PATH` at it if you want settings to survive container replacement.
+- Unconfigured chats default to reply mode and do not delete original messages.
 
 To update after changing code:
 
@@ -63,7 +70,8 @@ docker run -d \
   --name tg-x-link-transformer \
   --restart unless-stopped \
   -e TELEGRAM_BOT_TOKEN="123456789:replace-with-your-bot-token" \
-  -e LINK_ACTION="reply" \
+  -e LINK_SETTINGS_PATH="/data/link-settings.json" \
+  -v tg-x-link-transformer-data:/data \
   tg-x-link-transformer
 ```
 
@@ -93,7 +101,7 @@ Create `/etc/tg-x-link-transformer.env`:
 
 ```env
 TELEGRAM_BOT_TOKEN=123456789:replace-with-your-bot-token
-LINK_ACTION=reply
+LINK_SETTINGS_PATH=/var/lib/tg-x-link-transformer/link-settings.json
 RUST_LOG=info
 ```
 
@@ -113,6 +121,7 @@ Restart=always
 RestartSec=5
 User=nobody
 Group=nogroup
+StateDirectory=tg-x-link-transformer
 
 [Install]
 WantedBy=multi-user.target

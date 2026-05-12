@@ -1,3 +1,5 @@
 /target/
 .env
 *.log
+link-settings.json
+link-settings.json.tmp

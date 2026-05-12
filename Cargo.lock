@@ -1333,6 +1333,8 @@ dependencies = [
  "pretty_assertions",
  "pretty_env_logger",
  "regex",
+ "serde",
+ "serde_json",
  "teloxide",
  "tokio",
  "tracing",

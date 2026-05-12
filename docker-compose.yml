@@ -5,3 +5,10 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    environment:
+      LINK_SETTINGS_PATH: /data/link-settings.json
+    volumes:
+      - tg-x-link-transformer-data:/data
+
+volumes:
+  tg-x-link-transformer-data:
