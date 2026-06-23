@@ -39,6 +39,7 @@ fn transform_url_candidate(candidate: &str) -> Option<TransformedLink> {
     converted
         .set_host(Some(target_host))
         .expect("setting target host must succeed");
+    converted.set_query(None);
 
     Some(TransformedLink {
         original: original.to_string(),
@@ -85,7 +86,7 @@ mod tests {
             vec![TransformedLink {
                 original: "https://x.com/PlusMinusKettle/status/2051551662750232727?s=20"
                     .to_string(),
-                converted: "https://fixupx.com/PlusMinusKettle/status/2051551662750232727?s=20"
+                converted: "https://fixupx.com/PlusMinusKettle/status/2051551662750232727"
                     .to_string(),
             }]
         );
@@ -105,12 +106,12 @@ mod tests {
     }
 
     #[test]
-    fn preserves_query_and_fragment() {
+    fn strips_query_params_from_converted_link() {
         let links = transform_links("https://www.x.com/bob/status/67890?foo=bar&s=20#reply");
 
         assert_eq!(
             links[0].converted,
-            "https://fixupx.com/bob/status/67890?foo=bar&s=20#reply"
+            "https://fixupx.com/bob/status/67890#reply"
         );
     }
 
@@ -125,7 +126,7 @@ mod tests {
                 .map(|link| link.converted.as_str())
                 .collect::<Vec<_>>(),
             vec![
-                "https://fixupx.com/a/status/1?s=20",
+                "https://fixupx.com/a/status/1",
                 "https://fxtwitter.com/b/status/2",
             ]
         );
